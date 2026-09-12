@@ -33,4 +33,4 @@ ENV APP_DEBUG=false
 
 EXPOSE 80
 
-CMD sh -c "mkdir -p /var/www/html/database && touch /var/www/html/database/database.sqlite && chmod 777 /var/www/html/database /var/www/html/database/database.sqlite && php artisan storage:link && if [ -n \"\$PORT\" ]; then sed -i \"s/Listen 80/Listen \$PORT/g\" /etc/apache2/ports.conf && sed -i \"s/<VirtualHost \*:80>/<VirtualHost \*:\$PORT>/g\" /etc/apache2/sites-available/000-default.conf; fi && php artisan migrate --force && php artisan db:seed --force && exec apache2-foreground"
+CMD sh -c "mkdir -p /var/www/html/database; touch /var/www/html/database/database.sqlite; chmod 777 /var/www/html/database /var/www/html/database/database.sqlite; php artisan storage:link || true; if [ -n \"\$PORT\" ]; then sed -i \"s/Listen 80/Listen \$PORT/g\" /etc/apache2/ports.conf; sed -i \"s/<VirtualHost \*:80>/<VirtualHost \*:\$PORT>/g\" /etc/apache2/sites-available/000-default.conf; fi; php artisan migrate --force || true; php artisan db:seed --force || true; exec apache2-foreground"
