@@ -7,12 +7,11 @@ fi
 
 php artisan storage:link || true
 
-if [ -n "$DB_HOST" ]; then
-    echo "Running database migrations..."
-    php artisan migrate --force || true
-    echo "Running database seeders..."
-    php artisan db:seed --force || true
-fi
+echo "Running migrations..."
+php artisan migrate --force || true
+
+echo "Running seeders..."
+php artisan db:seed --force || true
 
 php artisan config:cache || true
 php artisan route:cache || true
