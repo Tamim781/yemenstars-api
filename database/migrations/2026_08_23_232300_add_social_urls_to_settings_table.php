@@ -9,9 +9,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('settings', function (Blueprint $table) {
-            $table->text('whatsapp_url')->nullable();
-            $table->text('instagram_url')->nullable();
-            $table->text('facebook_url')->nullable();
+            if (!Schema::hasColumn('settings', 'whatsapp_url')) {
+                $table->text('whatsapp_url')->nullable();
+            }
+            if (!Schema::hasColumn('settings', 'instagram_url')) {
+                $table->text('instagram_url')->nullable();
+            }
+            if (!Schema::hasColumn('settings', 'facebook_url')) {
+                $table->text('facebook_url')->nullable();
+            }
         });
     }
 
