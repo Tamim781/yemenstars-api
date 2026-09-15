@@ -15,6 +15,7 @@ use App\Models\Product;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ApiController extends Controller
 {
@@ -240,12 +241,7 @@ class ApiController extends Controller
             );
         }
 
-        return response()->json(
-            Order::with(['items'])
-                ->latest()
-                ->limit(30)
-                ->get()
-        );
+        return response()->json([]);
     }
 
     public function getOrder(Request $request, Order $order)
@@ -340,6 +336,54 @@ class ApiController extends Controller
         ]);
     }
 
+    private function processImagePayload(Request $request, array &$data, string $folder = 'products'): void
+    {
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store($folder, 'public');
+            $data['image_url'] = 'storage/' . $path;
+            return;
+        }
+
+        $base64 = $request->input('image_base64');
+        if (empty($base64) && !empty($data['image_url']) && str_starts_with($data['image_url'], 'data:image')) {
+            $base64 = $data['image_url'];
+        }
+
+        if (!empty($base64)) {
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64, $type)) {
+                $base64 = substr($base64, strpos($base64, ',') + 1);
+                $ext = strtolower($type[1]);
+            } else {
+                $ext = 'jpg';
+            }
+            $base64 = str_replace(' ', '+', $base64);
+            $imageContent = base64_decode($base64);
+            if ($imageContent !== false) {
+                $fileName = $folder . '_' . time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
+                Storage::disk('public')->put($folder . '/' . $fileName, $imageContent);
+                $data['image_url'] = 'storage/' . $folder . '/' . $fileName;
+            }
+        }
+    }
+
+    public function uploadAdminImage(Request $request)
+    {
+        abort_unless($request->user()->isAdmin(), 403);
+        $folder = $request->input('folder', 'products');
+        if (!in_array($folder, ['products', 'categories', 'offers'])) {
+            $folder = 'products';
+        }
+        $data = [];
+        $this->processImagePayload($request, $data, $folder);
+        if (!empty($data['image_url'])) {
+            return response()->json([
+                'url' => $data['image_url'],
+                'full_url' => asset($data['image_url']),
+            ]);
+        }
+        return response()->json(['message' => 'لم يتم إرسال صورة صحيحة'], 422);
+    }
+
     public function storeAdminProduct(Request $request)
     {
         abort_unless($request->user()->isAdmin(), 403);
@@ -350,10 +394,13 @@ class ApiController extends Controller
             'price' => 'required|numeric',
             'old_price' => 'nullable|numeric',
             'image_url' => 'nullable|string',
+            'image_base64' => 'nullable|string',
             'is_available' => 'nullable|boolean',
             'is_featured' => 'nullable|boolean',
             'is_daily_special' => 'nullable|boolean',
         ]);
+        $this->processImagePayload($request, $data, 'products');
+        unset($data['image_base64']);
         $product = Product::create($data);
         return response()->json($product, 201);
     }
@@ -368,10 +415,13 @@ class ApiController extends Controller
             'price' => 'sometimes|required|numeric',
             'old_price' => 'nullable|numeric',
             'image_url' => 'nullable|string',
+            'image_base64' => 'nullable|string',
             'is_available' => 'nullable|boolean',
             'is_featured' => 'nullable|boolean',
             'is_daily_special' => 'nullable|boolean',
         ]);
+        $this->processImagePayload($request, $data, 'products');
+        unset($data['image_base64']);
         $product->update($data);
         return response()->json($product->fresh());
     }
@@ -397,7 +447,10 @@ class ApiController extends Controller
             'name' => 'required|string|max:255',
             'sort_order' => 'nullable|integer',
             'image_url' => 'nullable|string',
+            'image_base64' => 'nullable|string',
         ]);
+        $this->processImagePayload($request, $data, 'categories');
+        unset($data['image_base64']);
         $category = Category::create($data);
         return response()->json($category, 201);
     }
@@ -409,7 +462,10 @@ class ApiController extends Controller
             'name' => 'sometimes|required|string|max:255',
             'sort_order' => 'nullable|integer',
             'image_url' => 'nullable|string',
+            'image_base64' => 'nullable|string',
         ]);
+        $this->processImagePayload($request, $data, 'categories');
+        unset($data['image_base64']);
         $category->update($data);
         return response()->json($category->fresh());
     }

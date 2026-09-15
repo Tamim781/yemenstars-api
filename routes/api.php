@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('admin')->group(function () {
         Route::get('/stats', [ApiController::class, 'getAdminStats']);
+        Route::post('/upload-image', [ApiController::class, 'uploadAdminImage']);
         Route::post('/products', [ApiController::class, 'storeAdminProduct']);
         Route::put('/products/{product}', [ApiController::class, 'updateAdminProduct']);
         Route::patch('/products/{product}/availability', [ApiController::class, 'toggleAdminProductAvailability']);
