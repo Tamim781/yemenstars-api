@@ -35,13 +35,18 @@ class Offer extends Model
         }
 
         if (filter_var($value, FILTER_VALIDATE_URL)) {
-            return $value;
+            $fixed = str_replace('/storage/storage/', '/storage/', $value);
+            if (\Illuminate\Support\Str::startsWith($fixed, 'http://yemenstars-api-production.up.railway.app')) {
+                $fixed = preg_replace('/^http:/', 'https:', $fixed);
+            }
+            return $fixed;
         }
 
-        $host = request()->getHost();
-        $port = request()->getPort();
-        $base = 'http://' . $host . (($port && !in_array($port, [80, 443], true)) ? ':' . $port : '');
+        $clean = ltrim($value, '/');
+        if (\Illuminate\Support\Str::startsWith($clean, 'storage/')) {
+            $clean = substr($clean, 8);
+        }
 
-        return rtrim($base, '/') . '/storage/' . ltrim($value, '/');
+        return 'https://yemenstars-api-production.up.railway.app/storage/' . ltrim($clean, '/');
     }
 }

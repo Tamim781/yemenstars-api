@@ -23,9 +23,18 @@ class Category extends Model
         }
 
         if (\Illuminate\Support\Str::startsWith($value, ['http://', 'https://'])) {
-            return $value;
+            $fixed = str_replace('/storage/storage/', '/storage/', $value);
+            if (\Illuminate\Support\Str::startsWith($fixed, 'http://yemenstars-api-production.up.railway.app')) {
+                $fixed = preg_replace('/^http:/', 'https:', $fixed);
+            }
+            return $fixed;
         }
 
-        return url('storage/' . ltrim($value, '/'));
+        $clean = ltrim($value, '/');
+        if (\Illuminate\Support\Str::startsWith($clean, 'storage/')) {
+            $clean = substr($clean, 8);
+        }
+
+        return 'https://yemenstars-api-production.up.railway.app/storage/' . ltrim($clean, '/');
     }
 }
