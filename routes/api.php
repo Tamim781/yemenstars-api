@@ -23,7 +23,7 @@ Route::post('/orders', [ApiController::class, 'createOrder']);
 Route::get('/orders', [ApiController::class, 'getOrders']);
 Route::get('/orders/{order}', [ApiController::class, 'getOrder']);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('api.auth')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
 
@@ -39,26 +39,26 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/orders/{order}/claim', [ApiController::class, 'claimOrder']);
     Route::put('/orders/{order}/status', [ApiController::class, 'updateOrderStatus']);
 
-    Route::prefix('admin')->group(function () {
-        Route::get('/stats', [ApiController::class, 'getAdminStats']);
-        Route::post('/upload-image', [ApiController::class, 'uploadAdminImage']);
-        Route::post('/products', [ApiController::class, 'storeAdminProduct']);
-        Route::put('/products/{product}', [ApiController::class, 'updateAdminProduct']);
-        Route::patch('/products/{product}/availability', [ApiController::class, 'toggleAdminProductAvailability']);
-        Route::delete('/products/{product}', [ApiController::class, 'deleteAdminProduct']);
-
-        Route::post('/categories', [ApiController::class, 'storeAdminCategory']);
-        Route::put('/categories/{category}', [ApiController::class, 'updateAdminCategory']);
-        Route::delete('/categories/{category}', [ApiController::class, 'deleteAdminCategory']);
-
-        Route::get('/staff', [StaffController::class, 'index']);
-        Route::post('/staff', [StaffController::class, 'store']);
-        Route::put('/staff/{user}', [StaffController::class, 'update']);
-        Route::delete('/staff/{user}', [StaffController::class, 'destroy']);
-    });
-
     Route::get('/occasions', [ApiController::class, 'getOccasions']);
     Route::post('/occasions', [ApiController::class, 'createOccasion']);
     Route::put('/occasions/{occasion}', [ApiController::class, 'updateOccasion']);
     Route::delete('/occasions/{occasion}', [ApiController::class, 'deleteOccasion']);
+});
+
+Route::middleware('api.admin')->prefix('admin')->group(function () {
+    Route::get('/stats', [ApiController::class, 'getAdminStats']);
+    Route::post('/upload-image', [ApiController::class, 'uploadAdminImage']);
+    Route::post('/products', [ApiController::class, 'storeAdminProduct']);
+    Route::put('/products/{product}', [ApiController::class, 'updateAdminProduct']);
+    Route::patch('/products/{product}/availability', [ApiController::class, 'toggleAdminProductAvailability']);
+    Route::delete('/products/{product}', [ApiController::class, 'deleteAdminProduct']);
+
+    Route::post('/categories', [ApiController::class, 'storeAdminCategory']);
+    Route::put('/categories/{category}', [ApiController::class, 'updateAdminCategory']);
+    Route::delete('/categories/{category}', [ApiController::class, 'deleteAdminCategory']);
+
+    Route::get('/staff', [StaffController::class, 'index']);
+    Route::post('/staff', [StaffController::class, 'store']);
+    Route::put('/staff/{user}', [StaffController::class, 'update']);
+    Route::delete('/staff/{user}', [StaffController::class, 'destroy']);
 });

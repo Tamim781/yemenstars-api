@@ -13,6 +13,34 @@ Route::get('/', function () {
 Route::get('/fish/{id}', [FishProfileController::class, 'showWeb'])->name('fish.profile');
 Route::get('/qr-card/{id}', [FishProfileController::class, 'acrylicCard'])->name('products.qr-card.public');
 
+// تقديم صور المنتجات والأقسام مباشرة لضمان عدم تأثرها بالـ symlink في الحاويات السحابية
+Route::get('/storage/{folder}/{filename}', function ($folder, $filename) {
+    $safeFolder = basename($folder);
+    $safeFile = basename($filename);
+
+    $paths = [
+        public_path("storage/{$safeFolder}/{$safeFile}"),
+        storage_path("app/public/{$safeFolder}/{$safeFile}"),
+    ];
+
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+            $mimes = [
+                'jpg' => 'image/jpeg',
+                'jpeg' => 'image/jpeg',
+                'png' => 'image/png',
+                'webp' => 'image/webp',
+                'gif' => 'image/gif',
+            ];
+            $contentType = $mimes[$ext] ?? 'image/jpeg';
+            return response()->file($path, ['Content-Type' => $contentType]);
+        }
+    }
+
+    return redirect('https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=800&q=85');
+})->where('filename', '.*');
+
 Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
 Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');

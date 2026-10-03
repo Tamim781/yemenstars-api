@@ -112,7 +112,7 @@ class FishProfileController extends Controller
             // 1. إذا كان هناك رابط صورة صالح مرفوع على السيرفر، نعرضه
             // 2. إذا كانت الصورة مسار محلي على الجوال أو غير مرفوعة، نعرض الصورة الحقيقية المتخصصة لهذا الصنف
             $img = $product->image_url;
-            if (!$img || str_starts_with($img, '/data/') || str_starts_with($img, 'file:') || str_ends_with($img, 'default-fish.jpg')) {
+            if (!$img || str_contains($img, '/data/user') || str_contains($img, 'product_images') || str_contains($img, 'scaled_') || str_contains($img, 'image_picker') || str_starts_with($img, 'file:') || str_ends_with($img, 'default-fish.jpg')) {
                 $displayImage = self::getAuthenticFishImage($product->name);
             } else {
                 $displayImage = $img;

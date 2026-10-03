@@ -58,6 +58,11 @@ class Product extends Model
             return null;
         }
 
+        // مسارات الملفات المحلية على هواتف الإدارة (التي لم ترفع بعد إلى السيرفر)
+        if (str_contains($value, '/data/user/') || str_contains($value, 'product_images/prod_') || Str::startsWith($value, 'file:')) {
+            return null;
+        }
+
         if (Str::startsWith($value, ['http://', 'https://'])) {
             $fixed = str_replace('/storage/storage/', '/storage/', $value);
             if (Str::startsWith($fixed, 'http://yemenstars-api-production.up.railway.app')) {
