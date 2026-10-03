@@ -1,4 +1,4 @@
-﻿FROM php:8.2-cli
+FROM php:8.2-cli
 
 RUN apt-get update && apt-get install -y \
     git \
@@ -18,7 +18,8 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-RUN chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
+RUN mkdir -p /var/www/html/storage/framework/views /var/www/html/storage/framework/cache /var/www/html/storage/framework/sessions /var/www/html/bootstrap/cache \
+    && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
 
 ENV APP_KEY="base64:owNmGemH30Fo2/z1vnNWafVb5MY0IGq+KfM3bRo04/M="
 ENV APP_ENV=production
@@ -26,4 +27,4 @@ ENV APP_DEBUG=false
 
 EXPOSE 8080
 
-CMD sh -c "mkdir -p /var/www/html/database && touch /var/www/html/database/database.sqlite && chmod 777 /var/www/html/database /var/www/html/database/database.sqlite && php artisan storage:link || true && php artisan migrate --force || true && php artisan db:seed --force || true && exec php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
+CMD sh -c "mkdir -p /var/www/html/storage/framework/views /var/www/html/storage/framework/cache /var/www/html/storage/framework/sessions /var/www/html/database && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache && touch /var/www/html/database/database.sqlite && chmod 777 /var/www/html/database /var/www/html/database/database.sqlite && php artisan storage:link || true && php artisan migrate --force || true && php artisan db:seed --force || true && exec php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"

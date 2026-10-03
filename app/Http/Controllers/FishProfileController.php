@@ -9,11 +9,32 @@ use Illuminate\Http\Request;
 class FishProfileController extends Controller
 {
     /**
+     * ضمان وجود مجلدات كاش Blade لتفادي خطأ Please provide a valid cache path
+     */
+    private function ensureViewCacheDirs()
+    {
+        $dirs = [
+            storage_path('framework'),
+            storage_path('framework/views'),
+            storage_path('framework/cache'),
+            storage_path('framework/sessions'),
+            bootstrap_path('cache'),
+        ];
+        foreach ($dirs as $dir) {
+            if (!is_dir($dir)) {
+                @mkdir($dir, 0777, true);
+            }
+        }
+    }
+
+    /**
      * العرض عبر صفحة الويب عند مسح كود الأكريليك بكاميرا الجوال العادية
      */
     public function showWeb($id)
     {
         try {
+            $this->ensureViewCacheDirs();
+
             $product = Product::with('category')->find($id);
 
             if (!$product) {
@@ -92,6 +113,8 @@ class FishProfileController extends Controller
     public function acrylicCard($id)
     {
         try {
+            $this->ensureViewCacheDirs();
+
             $product = Product::with('category')->find($id);
             if (!$product) {
                 $product = (object) [
@@ -119,6 +142,8 @@ class FishProfileController extends Controller
     public function analyticsWeb(Request $request)
     {
         try {
+            $this->ensureViewCacheDirs();
+
             $query = Product::with('category');
 
             $sortBy = $request->get('sort', 'scans_desc');
