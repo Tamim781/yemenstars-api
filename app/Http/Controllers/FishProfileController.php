@@ -18,7 +18,7 @@ class FishProfileController extends Controller
             storage_path('framework/views'),
             storage_path('framework/cache'),
             storage_path('framework/sessions'),
-            bootstrap_path('cache'),
+            base_path('bootstrap/cache'),
         ];
         foreach ($dirs as $dir) {
             if (!is_dir($dir)) {
