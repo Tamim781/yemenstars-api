@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -298,7 +298,7 @@
                         <div class="fish-category">{{ $product->category->name ?? 'مأكولات بحرية' }}</div>
                     </div>
                     <div class="price-badge">
-                        <div class="price-amount">{{ number_format($product->price) }}</div>
+                        <div class="price-amount">{{ number_format((float) ($product->price ?? 0)) }}</div>
                         <div class="price-currency">ريال يمني</div>
                     </div>
                 </div>
