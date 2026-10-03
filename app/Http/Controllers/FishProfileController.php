@@ -28,6 +28,45 @@ class FishProfileController extends Controller
     }
 
     /**
+     * جلب صورة حقيقية مطابقة لنوع السمك والطبخة التهامية/اليمنية في حال عدم رفع صورة خاصة
+     */
+    public static function getAuthenticFishImage($name)
+    {
+        $name = mb_strtolower($name, 'UTF-8');
+        if (str_contains($name, 'جمبري') || str_contains($name, 'روبيان')) {
+            return 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=800&q=85'; // روبيان وجمبري ذهبي طازج
+        }
+        if (str_contains($name, 'شروخ') || str_contains($name, 'استاكوزا')) {
+            return 'https://images.unsplash.com/photo-1559742811-822873691df8?w=800&q=85'; // شروخ واستكوزا بحرية
+        }
+        if (str_contains($name, 'سخلة')) {
+            return 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=800&q=85'; // سمك سخلة طازج
+        }
+        if (str_contains($name, 'ديرك') || str_contains($name, 'كنعد')) {
+            return 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=800&q=85'; // سمك ديرك فاخر
+        }
+        if (str_contains($name, 'صانونة')) {
+            return 'https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=85'; // إيدام وصانونة سمك مسبكة
+        }
+        if (str_contains($name, 'مشوي') || str_contains($name, 'موفي')) {
+            return 'https://images.unsplash.com/photo-1580476262798-bddd9f4b7369?w=800&q=85'; // سمك مشوي في التنور وعلى الفحم
+        }
+        if (str_contains($name, 'بروست') || str_contains($name, 'مقلي')) {
+            return 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=800&q=85'; // بروست سمك مقرمش
+        }
+        if (str_contains($name, 'ثمد') || str_contains($name, 'تونة')) {
+            return 'https://images.unsplash.com/photo-1501595091296-3aa970afb3ff?w=800&q=85'; // جزل ثمد وتونة طازجة
+        }
+        if (str_contains($name, 'باغة')) {
+            return 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=800&q=85'; // سمك باغة بلدي
+        }
+        if (str_contains($name, 'بياض')) {
+            return 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=800&q=85'; // سمك بياض ناصع
+        }
+        return 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=800&q=85';
+    }
+
+    /**
      * العرض عبر صفحة الويب عند مسح كود الأكريليك بكاميرا الجوال العادية
      */
     public function showWeb($id)
@@ -36,6 +75,11 @@ class FishProfileController extends Controller
             $this->ensureViewCacheDirs();
 
             $product = Product::with('category')->find($id);
+
+            // الرقم المعتمد دائماً للواتساب والطلبات بحسب طلب الإدارة
+            $phone = '967771000272';
+            $whatsappUrl = 'https://wa.me/967771000272';
+            $restaurantName = 'مطعم نجوم اليمن للأسماك';
 
             if (!$product) {
                 // إذا لم يوجد الصنف بالـ ID، نعرض قالباً افتراضياً أنيقاً يرحب بالعميل
@@ -47,15 +91,16 @@ class FishProfileController extends Controller
                     'benefits' => 'غني بأحماض أوميغا 3 المفيدة لصحة القلب والنشاط الذهني ومصدر بروتين نقي.',
                     'cooking_recommendations' => 'ينصح به: موفي بلدي في التنور مع تتبيلتنا الخاصة، أو مشوي على الفحم.',
                     'meat_texture' => 'لحم طري لذيذ متماسك',
-                    'image_url' => null,
+                    'image_url' => self::getAuthenticFishImage('صنف بحري'),
                     'category' => (object) ['name' => 'أسماك وبسطة نجوم اليمن'],
                 ];
 
                 return view('fish_profile', [
                     'product' => $fallbackProduct,
-                    'restaurantName' => 'مطعم نجوم اليمن للأسماك',
-                    'phone' => '967775806564',
-                    'whatsappUrl' => 'https://wa.me/967775806564',
+                    'displayImage' => self::getAuthenticFishImage('صنف بحري'),
+                    'restaurantName' => $restaurantName,
+                    'phone' => $phone,
+                    'whatsappUrl' => $whatsappUrl,
                 ]);
             }
 
@@ -63,19 +108,17 @@ class FishProfileController extends Controller
                 $product->increment('qr_scans_count');
             } catch (\Throwable $e) {}
 
-            $restaurantName = 'مطعم نجوم اليمن للأسماك';
-            $phone = '967775806564';
-            try {
-                $setting = Setting::first();
-                if ($setting) {
-                    $restaurantName = $setting->restaurant_name ?? $restaurantName;
-                    $phone = $setting->phone ?? $phone;
-                }
-            } catch (\Throwable $e) {}
+            // تحديد الصورة المعروضة بدقة:
+            // 1. إذا كان هناك رابط صورة صالح مرفوع على السيرفر، نعرضه
+            // 2. إذا كانت الصورة مسار محلي على الجوال أو غير مرفوعة، نعرض الصورة الحقيقية المتخصصة لهذا الصنف
+            $img = $product->image_url;
+            if (!$img || str_starts_with($img, '/data/') || str_starts_with($img, 'file:') || str_ends_with($img, 'default-fish.jpg')) {
+                $displayImage = self::getAuthenticFishImage($product->name);
+            } else {
+                $displayImage = $img;
+            }
 
-            $whatsappUrl = 'https://wa.me/' . preg_replace('/[^0-9]/', '', $phone);
-
-            return view('fish_profile', compact('product', 'restaurantName', 'phone', 'whatsappUrl'));
+            return view('fish_profile', compact('product', 'displayImage', 'restaurantName', 'phone', 'whatsappUrl'));
         } catch (\Throwable $e) {
             return response('خطأ في تحميل صفحة السمك: ' . $e->getMessage() . ' في السطر ' . $e->getLine(), 500);
         }
@@ -123,8 +166,7 @@ class FishProfileController extends Controller
                     'price' => request('price', 6000),
                 ];
             }
-            $setting = Setting::first();
-            $restaurantName = $setting->restaurant_name ?? 'مطعم نجوم اليمن للأسماك';
+            $restaurantName = 'مطعم نجوم اليمن للأسماك';
 
             // رابط الكود الدائم على السيرفر
             $qrTargetUrl = url("/fish/{$product->id}");

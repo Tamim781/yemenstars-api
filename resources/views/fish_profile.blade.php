@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{ $product->name }} - {{ $restaurantName }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,8 +15,9 @@
             --gold-light: #E5C158;
             --bg: #F8F9FA;
             --card-bg: #FFFFFF;
-            --text-dark: #1E293B;
+            --text-dark: #0F172A;
             --text-muted: #64748B;
+            --whatsapp-green: #25D366;
         }
 
         * {
@@ -31,7 +32,7 @@
             background-color: var(--bg);
             color: var(--text-dark);
             line-height: 1.6;
-            padding-bottom: 90px;
+            padding-bottom: 120px;
         }
 
         .header-bar {
@@ -83,13 +84,14 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
 
         .fresh-badge {
             position: absolute;
             top: 14px;
             right: 14px;
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(15, 23, 42, 0.88);
             backdrop-filter: blur(8px);
             color: var(--gold-light);
             padding: 6px 14px;
@@ -217,60 +219,205 @@
             border: 1px solid #DBEAFE;
         }
 
+        .footer-info {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 20px;
+        }
+
+        /* شريط العمليات السفلي */
         .action-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             background: white;
-            padding: 12px 20px;
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.08);
+            padding: 12px 16px;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.1);
             display: flex;
-            gap: 12px;
+            gap: 8px;
             max-width: 500px;
             margin: 0 auto;
             border-top: 1px solid #E2E8F0;
             z-index: 100;
         }
 
-        .btn-app {
-            flex: 2;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            text-align: center;
-            padding: 14px 16px;
+        .btn {
+            border: none;
             border-radius: 14px;
-            font-size: 13px;
             font-weight: 800;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
-        }
-
-        .btn-whatsapp {
-            flex: 1;
-            background: #25D366;
-            color: white;
-            text-align: center;
-            padding: 14px 10px;
-            border-radius: 14px;
             font-size: 13px;
-            font-weight: 800;
-            text-decoration: none;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
+            text-decoration: none;
+            transition: all 0.2s;
         }
 
-        .footer-info {
+        .btn-add-cart {
+            flex: 2;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            padding: 14px 12px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-whatsapp-direct {
+            flex: 1.5;
+            background: #25D366;
+            color: white;
+            padding: 14px 10px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-app {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 14px 8px;
+            box-shadow: 0 4px 12px rgba(139, 0, 0, 0.3);
+            font-size: 12px;
+        }
+
+        /* البانر العائم للسلة المجمعة */
+        .cart-floating-bar {
+            position: fixed;
+            bottom: 74px;
+            left: 16px;
+            right: 16px;
+            max-width: 468px;
+            margin: 0 auto;
+            background: #0F172A;
+            color: white;
+            border-radius: 16px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 1px solid var(--gold);
+            z-index: 99;
+            transform: translateY(150%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .cart-floating-bar.active {
+            transform: translateY(0);
+        }
+
+        .cart-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-count-badge {
+            background: var(--gold);
+            color: #0F172A;
+            font-weight: 900;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* نافذة منبثقة للسؤال: هل تريد طلب صنف آخر؟ */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 24px 24px 0 0;
+            padding: 24px 20px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.2);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
             text-align: center;
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 20px;
+            margin-bottom: 16px;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            color: #0F172A;
+            font-weight: 800;
+        }
+
+        .modal-header p {
+            font-size: 13px;
+            color: #64748B;
+            margin-top: 4px;
+        }
+
+        .cart-items-list {
+            max-height: 220px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+            border: 1px solid #F1F5F9;
+            border-radius: 14px;
+            padding: 10px;
+            background: #F8FAFC;
+        }
+
+        .cart-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #E2E8F0;
+        }
+
+        .cart-item-row:last-child {
+            border-bottom: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-modal-scan {
+            background: #F1F5F9;
+            color: #1E293B;
+            border: 1px solid #CBD5E1;
+            padding: 14px;
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .btn-modal-whatsapp {
+            background: #25D366;
+            color: white;
+            padding: 14px;
+            font-weight: 800;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
         }
     </style>
 </head>
@@ -284,7 +431,7 @@
     <div class="container">
         <div class="fish-card">
             <div class="fish-image-box">
-                <img src="{{ $product->image_url ?? asset('images/default-fish.jpg') }}" alt="{{ $product->name }}" onerror="this.src='https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=600'">
+                <img src="{{ $displayImage }}" alt="{{ $product->name }}" onerror="this.src='https://images.unsplash.com/photo-1534939561126-855b8675edd7?w=700'">
                 <div class="fresh-badge">
                     <span>✨</span>
                     <span>طازج يومياً من البحر</span>
@@ -294,16 +441,16 @@
             <div class="fish-content">
                 <div class="fish-header">
                     <div>
-                        <h2 class="fish-name">{{ $product->name }}</h2>
+                        <h2 class="fish-name" id="currentFishName">{{ $product->name }}</h2>
                         <div class="fish-category">{{ $product->category->name ?? 'مأكولات بحرية' }}</div>
                     </div>
                     <div class="price-badge">
-                        <div class="price-amount">{{ number_format((float) ($product->price ?? 0)) }}</div>
+                        <div class="price-amount" id="currentFishPrice">{{ number_format((float) ($product->price ?? 0)) }}</div>
                         <div class="price-currency">ريال يمني</div>
                     </div>
                 </div>
 
-                @if($product->description)
+                @if(!empty($product->description))
                 <p style="font-size: 13px; color: #475569; margin-bottom: 12px;">
                     {{ $product->description }}
                 </p>
@@ -342,28 +489,272 @@
 
         <div class="footer-info">
             <p>تم مسح هذا الكود مباشرة من بسطة الأسماك في صالة المطعم</p>
-            <p>جميع الأسماك بلدية وطازجة ومختارة بعناية يومياً</p>
+            <p>رقم طلبات واستفسارات المطعم المعتمد: <strong>{{ $phone }}</strong></p>
         </div>
     </div>
 
+    <!-- البانر العائم لسلة البسطة -->
+    <div class="cart-floating-bar" id="cartFloatingBar">
+        <div class="cart-info">
+            <span class="cart-count-badge" id="cartCountBadge">1 صنف</span>
+            <div style="font-size: 12px;">
+                <div style="font-weight: 800;" id="cartTotalText">الإجمالي: 0 ريال</div>
+            </div>
+        </div>
+        <button class="btn" style="background: #25D366; color: white; padding: 6px 14px; font-size: 12px;" onclick="openOrderModal()">
+            <span>إرسال للواتساب 💬</span>
+        </button>
+    </div>
+
+    <!-- شريط الأزرار الرئيسي في الأسفل -->
     <div class="action-bar">
-        <a href="yemenstars://product/{{ $product->id }}" class="btn-app" id="openAppBtn">
-            <span>📱</span>
-            <span>اطلب في التطبيق</span>
-        </a>
-        <a href="{{ $whatsappUrl }}?text={{ urlencode('السلام عليكم، أود طلب سمك ' . $product->name . ' من بسطة المطعم.') }}" class="btn-whatsapp" target="_blank">
+        <button class="btn btn-add-cart" id="addToCartBtn" onclick="addItemToOrder()">
+            <span>🛒</span>
+            <span>إضافة للطلب</span>
+        </button>
+
+        <a href="javascript:void(0)" class="btn btn-whatsapp-direct" onclick="sendSingleWhatsApp()">
             <span>💬</span>
-            <span>واتساب</span>
+            <span>طلب فوري</span>
+        </a>
+
+        <a href="yemenstars://product/{{ $product->id }}" class="btn btn-app" id="openAppBtn">
+            <span>📱</span>
+            <span>التطبيق</span>
         </a>
     </div>
 
+    <!-- نافذة المودال التفاعلية: هل تريد طلب صنف آخر؟ -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="font-size: 32px; margin-bottom: 6px;">🐟🛒</div>
+                <h3>قائمة أصناف البسطة المختارة</h3>
+                <p>هل تود إضافة صنف سمك آخر، أم إرسال الطلب كاملاً عبر الواتساب الآن؟</p>
+            </div>
+
+            <div class="cart-items-list" id="cartItemsList">
+                <!-- يتم تعبئتها ديناميكياً بالجافاسكريبت -->
+            </div>
+
+            <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 15px; margin-bottom: 14px; padding: 0 4px;">
+                <span>الإجمالي الكلي:</span>
+                <span style="color: var(--primary);" id="modalTotalSum">0 ريال</span>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-modal-scan" onclick="scanAnotherFish()">
+                    <span>➕ نعم، مسح صنف بحري آخر من البسطة</span>
+                </button>
+                <button class="btn btn-modal-whatsapp" onclick="sendFullWhatsAppOrder()">
+                    <span>📲 إرسال الطلب الكامل دفعة واحدة عبر الواتساب</span>
+                </button>
+                <button class="btn" style="background: transparent; color: #64748B; font-size: 12px; padding: 6px;" onclick="closeOrderModal()">
+                    إغلاق ومتابعة التصفح
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // محاولة فتح التطبيق مباشرة في حال كان مثبتاً في الجوال
+        // بيانات الصنف الحالي
+        const currentItem = {
+            id: "{{ $product->id }}",
+            name: "{{ $product->name }}",
+            price: {{ (float) ($product->price ?? 0) }},
+            qty: 1
+        };
+
+        const restaurantWhatsApp = "967771000272"; // الرقم المعتمد بناءً على طلب العميل
+
+        // مفتاح السلة في التخزين المحلي للمتصفح
+        const CART_STORAGE_KEY = 'yemenstars_fish_order_cart';
+
+        function getCart() {
+            try {
+                const raw = localStorage.getItem(CART_STORAGE_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveCart(cart) {
+            try {
+                localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+            } catch (e) {}
+            updateFloatingCartBar();
+        }
+
+        // إضافة الصنف الحالي للطلب
+        function addItemToOrder() {
+            let cart = getCart();
+            const existingIdx = cart.findIndex(i => String(i.id) === String(currentItem.id));
+            if (existingIdx !== -1) {
+                cart[existingIdx].qty += 1;
+            } else {
+                cart.push({...currentItem});
+            }
+            saveCart(cart);
+            openOrderModal();
+        }
+
+        function updateFloatingCartBar() {
+            const cart = getCart();
+            const bar = document.getElementById('cartFloatingBar');
+            if (cart.length > 0) {
+                let totalCount = 0;
+                let totalPrice = 0;
+                cart.forEach(item => {
+                    totalCount += item.qty;
+                    totalPrice += (item.price * item.qty);
+                });
+                document.getElementById('cartCountBadge').innerText = totalCount + ' صنف';
+                document.getElementById('cartTotalText').innerText = 'الإجمالي: ' + totalPrice.toLocaleString() + ' ريال';
+                bar.classList.add('active');
+            } else {
+                bar.classList.remove('active');
+            }
+        }
+
+        function openOrderModal() {
+            const cart = getCart();
+            if (cart.length === 0) {
+                cart.push({...currentItem});
+                saveCart(cart);
+            }
+            renderModalCartItems();
+            document.getElementById('orderModal').classList.add('active');
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.remove('active');
+        }
+
+        function renderModalCartItems() {
+            const cart = getCart();
+            const container = document.getElementById('cartItemsList');
+            container.innerHTML = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                total += (item.price * item.qty);
+                const row = document.createElement('div');
+                row.className = 'cart-item-row';
+                row.innerHTML = `
+                    <div style="flex: 2;">
+                        <div style="font-weight: 700; font-size: 13px;">${item.name}</div>
+                        <div style="font-size: 11px; color: #64748B;">${item.price.toLocaleString()} ريال × ${item.qty}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <button onclick="changeQty(${index}, -1)" style="width: 26px; height: 26px; border: 1px solid #CBD5E1; background: white; border-radius: 6px; font-weight: bold; cursor: pointer;">-</button>
+                        <span style="font-weight: 800; font-size: 13px;">${item.qty}</span>
+                        <button onclick="changeQty(${index}, 1)" style="width: 26px; height: 26px; border: 1px solid #CBD5E1; background: white; border-radius: 6px; font-weight: bold; cursor: pointer;">+</button>
+                        <button onclick="removeItem(${index})" style="background: none; border: none; color: #EF4444; font-size: 16px; cursor: pointer; margin-right: 4px;">🗑️</button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            document.getElementById('modalTotalSum').innerText = total.toLocaleString() + ' ريال يمني';
+        }
+
+        function changeQty(index, delta) {
+            let cart = getCart();
+            if (cart[index]) {
+                cart[index].qty += delta;
+                if (cart[index].qty <= 0) {
+                    cart.splice(index, 1);
+                }
+                saveCart(cart);
+                renderModalCartItems();
+            }
+        }
+
+        function removeItem(index) {
+            let cart = getCart();
+            cart.splice(index, 1);
+            saveCart(cart);
+            renderModalCartItems();
+            if (cart.length === 0) {
+                closeOrderModal();
+            }
+        }
+
+        // مسح صنف آخر من البسطة
+        function scanAnotherFish() {
+            closeOrderModal();
+            // توجيه لطيف للعميل لمسح الكود التالي بكاميرا الجوال
+            alert('يرجى توجيه كاميرا هاتفك إلى كارت الصنف التالي في بسطة الأسماك 🐟✨ وسيتم حفظ هذا الصنف وجمعه مع الصنف الجديد في طلب واحد!');
+        }
+
+        // إرسال الطلب الكامل المجمع عبر الواتساب دفعة واحدة
+        function sendFullWhatsAppOrder() {
+            const cart = getCart();
+            if (cart.length === 0) {
+                sendSingleWhatsApp();
+                return;
+            }
+
+            let msg = "السلام عليكم ورحمة الله وبركاته،\n";
+            msg += "أود تأكيد طلب من بسطة الأسماك بمطعم نجوم اليمن:\n";
+            msg += "---------------------------------\n";
+
+            let total = 0;
+            cart.forEach((item, idx) => {
+                const subtotal = item.price * item.qty;
+                total += subtotal;
+                msg += `${idx + 1}. ${item.name} (${item.qty} كجم/نفر) - ${subtotal.toLocaleString()} ريال\n`;
+            });
+
+            msg += "---------------------------------\n";
+            msg += `💰 الإجمالي النهائي: ${total.toLocaleString()} ريال يمني\n`;
+            msg += "📍 طلب مباشر عبر كود بسطة الأسماك\n";
+            msg += "يرجى تأكيد الاستلام والبدء في التجهيز. شكراً لكم!";
+
+            // تفريغ السلة بعد إرسال الطلب
+            localStorage.removeItem(CART_STORAGE_KEY);
+            updateFloatingCartBar();
+            closeOrderModal();
+
+            const waUrl = "https://wa.me/" + restaurantWhatsApp + "?text=" + encodeURIComponent(msg);
+            window.location.href = waUrl;
+        }
+
+        // إرسال صنف مفرد مباشرة للواتساب
+        function sendSingleWhatsApp() {
+            const price = {{ (float) ($product->price ?? 0) }};
+            let msg = "السلام عليكم ورحمة الله وبركاته،\n";
+            msg += "أود طلب صنف من بسطة الأسماك:\n";
+            msg += "🐟 الصنف: {{ $product->name }}\n";
+            msg += "💵 السعر: " + price.toLocaleString() + " ريال يمني\n";
+            msg += "يرجى تأكيد الاستلام وتجهيز الطلب طازجاً. شكراً لكم!";
+
+            const waUrl = "https://wa.me/" + restaurantWhatsApp + "?text=" + encodeURIComponent(msg);
+            window.location.href = waUrl;
+        }
+
+        // الربط الذكي للتطبيق (Deep Link): يفتح التطبيق إذا مثبت، أو يفتح المتجر / صفحة الويب إذا غير مثبت
         document.getElementById('openAppBtn').addEventListener('click', function(e) {
-            var appUrl = "yemenstars://product/{{ $product->id }}";
+            e.preventDefault();
+            const appSchemeUrl = "yemenstars://product/{{ $product->id }}";
+            // رابط المتجر السحابي أو صفحة التحميل
+            const webStoreUrl = "https://yemenstars-api-production.up.railway.app";
+
+            const start = Date.now();
+            window.location.href = appSchemeUrl;
+
             setTimeout(function() {
-                // إذا لم يكن التطبيق مثبتاً، يتم التنبيه
-            }, 1000);
+                // إذا مرت ثانية ونصف ولم يُفتح التطبيق، نفتح له صفحة الموقع/المتجر
+                if (Date.now() - start < 2000) {
+                    window.location.href = webStoreUrl;
+                }
+            }, 1500);
+        });
+
+        // تهيئة البانر العائم عند تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            updateFloatingCartBar();
         });
     </script>
 </body>
