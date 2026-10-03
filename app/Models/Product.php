@@ -20,6 +20,21 @@ class Product extends Model
         'is_available',
         'is_featured',
         'is_daily_special',
+        'benefits',
+        'cooking_recommendations',
+        'meat_texture',
+        'qr_scans_count',
+        'qr_orders_count',
+    ];
+
+    protected $casts = [
+        'is_available' => 'boolean',
+        'is_featured' => 'boolean',
+        'is_daily_special' => 'boolean',
+        'qr_scans_count' => 'integer',
+        'qr_orders_count' => 'integer',
+        'price' => 'float',
+        'old_price' => 'float',
     ];
 
     public function category()

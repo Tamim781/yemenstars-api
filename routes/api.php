@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\StaffController;
+use App\Http\Controllers\FishProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
@@ -10,6 +11,10 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::get('/categories', [ApiController::class, 'getCategories']);
 Route::get('/products', [ApiController::class, 'getProducts']);
+Route::get('/products/{id}/qr-scan', [FishProfileController::class, 'scanApi']);
+Route::post('/products/{id}/qr-scan', [FishProfileController::class, 'scanApi']);
+Route::get('/fish/{id}', [FishProfileController::class, 'scanApi']);
+Route::get('/qr-analytics', [FishProfileController::class, 'analyticsApi']);
 Route::get('/offers', [ApiController::class, 'getOffers']);
 Route::get('/payment-methods', [ApiController::class, 'getPaymentMethods']);
 Route::get('/settings', [ApiController::class, 'getSettings']);
