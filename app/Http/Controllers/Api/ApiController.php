@@ -395,7 +395,14 @@ class ApiController extends Controller
         // إذا لم يتم رفع صورة جديدة، وكان الرابط المرسل مساراً محلياً من هاتف الجوال، نتجاهله للحفاظ على صورة السيرفر
         if (isset($data['image_url'])) {
             $raw = $data['image_url'];
-            if (str_contains($raw, '/data/user/') || str_contains($raw, 'product_images/prod_') || str_starts_with($raw, 'file:')) {
+            if (
+                str_contains($raw, '/data/') ||
+                str_contains($raw, '/storage/emulated/') ||
+                str_contains($raw, 'product_images/') ||
+                str_contains($raw, 'category_images/') ||
+                str_contains($raw, 'cache/') ||
+                str_starts_with($raw, 'file:')
+            ) {
                 unset($data['image_url']);
             }
         }

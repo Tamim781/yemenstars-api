@@ -59,7 +59,14 @@ class Product extends Model
         }
 
         // مسارات الملفات المحلية على هواتف الإدارة (التي لم ترفع بعد إلى السيرفر)
-        if (str_contains($value, '/data/user/') || str_contains($value, 'product_images/prod_') || Str::startsWith($value, 'file:')) {
+        if (
+            str_contains($value, '/data/') ||
+            str_contains($value, '/storage/emulated/') ||
+            str_contains($value, 'product_images/') ||
+            str_contains($value, 'category_images/') ||
+            str_contains($value, 'cache/') ||
+            Str::startsWith($value, 'file:')
+        ) {
             return null;
         }
 

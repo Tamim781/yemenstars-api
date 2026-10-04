@@ -22,6 +22,18 @@ class Category extends Model
             return null;
         }
 
+        // مسارات الملفات المحلية على هواتف الإدارة (التي لم ترفع بعد إلى السيرفر)
+        if (
+            str_contains($value, '/data/') ||
+            str_contains($value, '/storage/emulated/') ||
+            str_contains($value, 'category_images/') ||
+            str_contains($value, 'product_images/') ||
+            str_contains($value, 'cache/') ||
+            \Illuminate\Support\Str::startsWith($value, 'file:')
+        ) {
+            return null;
+        }
+
         if (\Illuminate\Support\Str::startsWith($value, ['http://', 'https://'])) {
             $fixed = str_replace('/storage/storage/', '/storage/', $value);
             if (\Illuminate\Support\Str::startsWith($fixed, 'http://yemenstars-api-production.up.railway.app')) {
