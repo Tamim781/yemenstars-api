@@ -1,0 +1,18 @@
+# Environment secrets
+.env
+.env.*
+*.env
+*.key
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local data & logs
+*.log
+local_data/
