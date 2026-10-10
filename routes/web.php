@@ -9,6 +9,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/health', [App\Http\Controllers\Api\ApiController::class, 'healthCheck']);
+Route::get('/api/health', [App\Http\Controllers\Api\ApiController::class, 'healthCheck']);
+
 // الرابط الذكي الدائم المطبوع على كروت الأكريليك ببسطة الأسماك
 Route::get('/fish/{id}', [FishProfileController::class, 'showWeb'])->name('fish.profile');
 Route::get('/qr-card/{id}', [FishProfileController::class, 'acrylicCard'])->name('products.qr-card.public');

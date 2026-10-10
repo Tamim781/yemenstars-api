@@ -27,8 +27,9 @@ RUN mkdir -p /var/www/html/storage/framework/views /var/www/html/storage/framewo
 
 ENV APP_KEY="base64:owNmGemH30Fo2/z1vnNWafVb5MY0IGq+KfM3bRo04/M="
 ENV APP_ENV=production
-ENV APP_DEBUG=false
-ENV GEMINI_MODEL="gemini-1.5-flash"
+ENV GEMINI_MODEL="gemini-2.5-flash"
+ENV ENVIRONMENT="production"
+ENV HOST="0.0.0.0"
 
 EXPOSE 8080
 

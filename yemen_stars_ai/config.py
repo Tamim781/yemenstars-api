@@ -14,7 +14,7 @@ class Settings:
     def reload(self):
         default_key = base64.b64decode("QVEuQWI4Uk42TDB2Q3l5dFotTlE1MF96ZDRXOURFUFY5ektwWG5BbjhDQzlsWEJHZXV5RVE=").decode("utf-8")
         self.GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip() or default_key
-        self.GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash").strip()
+        self.GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip()
         self.GEMINI_TIMEOUT_SECONDS = float(os.getenv("GEMINI_TIMEOUT_SECONDS", "30"))
         self.GEMINI_TEMPERATURE = float(os.getenv("GEMINI_TEMPERATURE", "0.65"))
         self.GEMINI_MAX_OUTPUT_TOKENS = int(os.getenv("GEMINI_MAX_OUTPUT_TOKENS", "800"))

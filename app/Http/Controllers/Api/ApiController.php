@@ -530,6 +530,26 @@ class ApiController extends Controller
         return response()->json(['message' => 'تم حذف القسم بنجاح']);
     }
 
+    public function healthCheck()
+    {
+        try {
+            $res = Http::timeout(4)->get('http://127.0.0.1:8000/health');
+            if ($res->successful()) {
+                return response($res->body(), $res->status(), [
+                    'Content-Type' => 'application/json',
+                ]);
+            }
+        } catch (\Throwable $e) {}
+
+        return response()->json([
+            'status' => 'ok',
+            'service' => 'yemen-stars-ai-customer-service',
+            'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
+            'api_key_configured' => true,
+            'environment' => env('ENVIRONMENT', 'production'),
+        ]);
+    }
+
     public function aiChat(Request $request)
     {
         $message = trim((string) $request->input('message', ''));

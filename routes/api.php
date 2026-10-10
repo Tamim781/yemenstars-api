@@ -18,6 +18,7 @@ Route::get('/qr-analytics', [FishProfileController::class, 'analyticsApi']);
 Route::get('/offers', [ApiController::class, 'getOffers']);
 Route::get('/payment-methods', [ApiController::class, 'getPaymentMethods']);
 Route::get('/settings', [ApiController::class, 'getSettings']);
+Route::get('/health', [ApiController::class, 'healthCheck']);
 Route::post('/ai/chat', [ApiController::class, 'aiChat']);
 Route::post('/chat', [ApiController::class, 'aiChat']);
 
