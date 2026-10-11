@@ -10,6 +10,9 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     && docker-php-ext-install pdo_mysql pdo_pgsql bcmath zip \
+    && echo "upload_max_filesize = 50M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "post_max_size = 50M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/uploads.ini \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www/html
